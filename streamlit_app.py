@@ -3,11 +3,12 @@ import streamlit as st
 from streamlit_chat import message
 import os 
 
+# Set the Bard API key using the environment variable
 os.environ["_BARD_API_KEY"] = "Ywh_FGpeDX7EtliOVuqwyQLnDzE8j6-XKOq1abWIxsPC_BQ-zkflJjbpPJdRWyKzFrQHZg."
 
 # Function to get the response from the Bard API based on the user's input prompt
 def response_api(prompt):
-    # Use Bard API to get the answer
+    # Use the Bard API to get the answer based on the user's prompt
     response = Bard().get_answer(str(prompt))
     # Extract the content from the response
     message_content = response['content']
@@ -15,11 +16,14 @@ def response_api(prompt):
 
 # Function to get user input using a Streamlit text input widget
 def user_input():
-    return st.text_input("Enter your prompt:")
+    # Create a text input field for the user to enter their prompt
+    input_text = st.text_input("Enter your prompt:")
+    return input_text
 
 # Initialize session_state to store past inputs and generated outputs
 if 'generate' not in st.session_state:
     st.session_state['generate'] = []
+
 if 'past' not in st.session_state:
     st.session_state['past'] = []
 
@@ -34,8 +38,8 @@ if user_text:
 
 # Display the chat history (past inputs and generated outputs) in reverse order
 if st.session_state['generate']:
-    for i, (past_text, generated_text) in enumerate(reversed(zip(st.session_state['past'], st.session_state['generate']))):
+    for i in range(len(st.session_state['generate']) - 1, -1, -1):
         # Display past user input with 'is_user=True' to indicate that it's the user's message
-        message(past_text, is_user=True, key=f"{i}_user")
+        message(st.session_state["past"][i], is_user=True, key=str(i) + '_user')
         # Display the generated response
-        message(generated_text, key=str(i))
+        message(st.session_state["generate"][i], key=str(i))
